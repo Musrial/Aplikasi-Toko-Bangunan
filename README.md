@@ -34,7 +34,7 @@ Aplikasi web berbasis React.js dan Express.js yang digunakan untuk mengelola ope
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/ferlijunandar/Aplikasi-Toko-Bangunan.git
+https://github.com/Musrial/Aplikasi-Toko-Bangunan.git
 cd Aplikasi-Toko-Bangunan
 ```
 ### 2. Setup Backend
