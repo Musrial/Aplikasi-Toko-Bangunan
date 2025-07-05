@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 // Konfigurasi axios untuk baseURL dan interceptors
-axios.defaults.baseURL = 'http://localhost:5000'; // Ubah ke port server backend Anda
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token');
@@ -12,9 +12,7 @@ axios.interceptors.request.use(
     }
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
 const UserManagement = () => {
@@ -69,21 +67,17 @@ const UserManagement = () => {
     e.preventDefault();
     try {
       if (isEditing) {
-        // Update existing user
         const { id, ...updateData } = formData;
-        // If password is empty, don't send it (it means don't change password)
         if (!updateData.password) {
           delete updateData.password;
         }
-        
         await axios.put(`/api/users/${id}`, updateData);
         toast.success('Pengguna berhasil diperbarui');
       } else {
-        // Create new user
         await axios.post('/api/users', formData);
         toast.success('Pengguna berhasil ditambahkan');
       }
-      
+
       resetForm();
       fetchUsers();
     } catch (error) {
@@ -97,17 +91,15 @@ const UserManagement = () => {
       id: user.id,
       nama: user.nama,
       username: user.username,
-      password: '', // Don't show password, leave it blank
+      password: '',
       role: user.role
     });
     setIsEditing(true);
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) {
-      return;
-    }
-    
+    if (!window.confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) return;
+
     try {
       await axios.delete(`/api/users/${id}`);
       toast.success('Pengguna berhasil dihapus');
@@ -123,9 +115,7 @@ const UserManagement = () => {
       <section className="content-header">
         <div className="container-fluid">
           <div className="row mb-2">
-            <div className="col-sm-6">
-              <h1>Manajemen Pengguna</h1>
-            </div>
+            <div className="col-sm-6"><h1>Manajemen Pengguna</h1></div>
             <div className="col-sm-6">
               <ol className="breadcrumb float-sm-right">
                 <li className="breadcrumb-item"><a href="#">Home</a></li>
@@ -148,66 +138,27 @@ const UserManagement = () => {
                   <div className="card-body">
                     <div className="form-group">
                       <label htmlFor="nama">Nama</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        id="nama" 
-                        name="nama"
-                        value={formData.nama}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <input type="text" className="form-control" id="nama" name="nama" value={formData.nama} onChange={handleInputChange} required />
                     </div>
                     <div className="form-group">
                       <label htmlFor="username">Username</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        id="username" 
-                        name="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <input type="text" className="form-control" id="username" name="username" value={formData.username} onChange={handleInputChange} required />
                     </div>
                     <div className="form-group">
                       <label htmlFor="password">Password {isEditing && '(Kosongkan jika tidak diubah)'}</label>
-                      <input 
-                        type="password" 
-                        className="form-control" 
-                        id="password" 
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required={!isEditing}
-                      />
+                      <input type="password" className="form-control" id="password" name="password" value={formData.password} onChange={handleInputChange} required={!isEditing} />
                     </div>
                     <div className="form-group">
                       <label htmlFor="role">Role</label>
-                      <select 
-                        className="form-control" 
-                        id="role" 
-                        name="role"
-                        value={formData.role}
-                        onChange={handleInputChange}
-                        required
-                      >
+                      <select className="form-control" id="role" name="role" value={formData.role} onChange={handleInputChange} required>
                         <option value="admin">Admin</option>
                         <option value="kasir">Kasir</option>
                       </select>
                     </div>
                   </div>
                   <div className="card-footer">
-                    <button type="submit" className="btn btn-primary">
-                      {isEditing ? 'Update' : 'Simpan'}
-                    </button>
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary ml-2" 
-                      onClick={resetForm}
-                    >
-                      Batal
-                    </button>
+                    <button type="submit" className="btn btn-primary">{isEditing ? 'Update' : 'Simpan'}</button>
+                    <button type="button" className="btn btn-secondary ml-2" onClick={resetForm}>Batal</button>
                   </div>
                 </form>
               </div>
@@ -249,25 +200,13 @@ const UserManagement = () => {
                               </td>
                               <td>{new Date(user.created_at).toLocaleDateString('id-ID')}</td>
                               <td>
-                                <button 
-                                  className="btn btn-sm btn-warning mr-1" 
-                                  onClick={() => handleEdit(user)}
-                                >
-                                  Edit
-                                </button>
-                                <button 
-                                  className="btn btn-sm btn-danger" 
-                                  onClick={() => handleDelete(user.id)}
-                                >
-                                  Hapus
-                                </button>
+                                <button className="btn btn-sm btn-warning mr-1" onClick={() => handleEdit(user)}>Edit</button>
+                                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(user.id)}>Hapus</button>
                               </td>
                             </tr>
                           ))
                         ) : (
-                          <tr>
-                            <td colSpan="6" className="text-center">Tidak ada data pengguna</td>
-                          </tr>
+                          <tr><td colSpan="6" className="text-center">Tidak ada data pengguna</td></tr>
                         )}
                       </tbody>
                     </table>

@@ -18,10 +18,9 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      // Gunakan URL lengkap backend untuk menghindari error 404
-      const response = await axios.post('http://localhost:5000/api/login', { 
-        username, 
-        password 
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
+        username,
+        password
       });
 
       const { token, user } = response.data;
@@ -34,7 +33,7 @@ const Login = ({ onLogin }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      
+
       if (error.response) {
         toast.error(error.response.data.message || 'Login gagal');
       } else if (error.request) {
